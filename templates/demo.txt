@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load static %}
+
+    <link rel="stylesheet" href={% static 'djangoProject\staticfiles\style.css' %}>
+
+    <h1>Наши товары</h1>
+    
+    <div class="products-container custom-products-container">
+        <div id="productWrapper">
+            {% for product in products %}
+            <div class="product">
+                <h2>{{ product.name }}</h2>
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                <button class="buy-btn button-arounder">Купить</button>
+            </div>
+            {% endfor %}
+        </div>
+        <div id="pagination">
+            <button id="prevButton" class="pagination-button">&lt;</button>
+            <button id="nextButton" class="pagination-button">&gt;</button>
+        </div>
+    </div>
+
+    <div class="registration-form">
+        <h2>Для заказа товара с Вами свяжется сотрудник по доставке</h2>
+        <form method="post" action="{% url 'register' %}">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="Имя" required><br>
+            <input type="text" name="phone" placeholder="Телефон" required><br>
+            <input type="email" name="email" placeholder="Email" required><br>
+            <textarea name="message" placeholder="Сообщение"></textarea><br>
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+    </div>
+
+    {% if success %}
+        <p>Заявка на звонок была принята!</p>
+    {% endif %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var container = $('#productWrapper');
+            var buttonNext = $('#nextButton');
+            var buttonPrev = $('#prevButton');
+            var scrollWidth = container[0].scrollWidth;
+            var containerWidth = container.innerWidth();
+            var scrollPosition = 0;
+
+            // Check if next button should be visible
+            function checkNextButtonVisibility() {
+                if (scrollPosition < scrollWidth - containerWidth) {
+                    buttonNext.show();
+                } else {
+                    buttonNext.hide();
+                }
+            }
+
+            // Check if previous button should be visible
+            function checkPrevButtonVisibility() {
+                if (scrollPosition > 0) {
+                    buttonPrev.show();
+                } else {
+                    buttonPrev.hide();
+                }
+            }
+
+            // Scroll to the next set of products
+            buttonNext.on('click', function() {
+                scrollPosition += containerWidth;
+                container.animate({ scrollLeft: scrollPosition }, 'slow');
+                checkNextButtonVisibility();
+                checkPrevButtonVisibility();
+            });
+
+            // Scroll to the previous set of products
+            buttonPrev.on('click', function() {
+                scrollPosition -= containerWidth;
+                container.animate({ scrollLeft: scrollPosition }, 'slow');
+                checkNextButtonVisibility();
+                checkPrevButtonVisibility();
+            });
+
+            // Initial visibility check
+            checkNextButtonVisibility();
+            checkPrevButtonVisibility();
+        });
+    </script>
+{% endblock %}

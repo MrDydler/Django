@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}описание{% endblock %}</title>
+    <link rel="stylesheet" href="djangoProject\staticfiles\style.css">
+</head>
+<body>
+    <header>
+        <h1> base </h1>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <h1> footer </h1>
+    </footer>
+</body>
+</html>
